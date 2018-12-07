@@ -9,14 +9,25 @@ const STORE = {
     {name: 'bread', checked: false}
   ],
 
-  checkedOnly:[]
+  displayUnchecked: false
 
 };
+function handleShowUncheckedOnly(){
+    $('#filterChecked').submit(function(event){
+      event.preventDefault();
+    changeSTOREDisplayUnchecked();
+    renderShoppingList();
+  });
+}
+
+function changeSTOREDisplayUnchecked() {
+  STORE.displayUnchecked = !STORE.displayUnchecked;
+}
 
 
 function generateItemElement(item, itemIndex, template) {
   return `
-    <li class="js-item-index-element" data-item-index="${itemIndex}">
+    <li class="js-item-index-element" data-item-index="${itemIndex}" ${STORE.displayUnchecked && item.checked ? 'hidden' : ''}>
       <span class="shopping-item js-shopping-item ${item.checked ? 'shopping-item__checked' : ''}">${item.name}</span>
       <div class="shopping-item-controls">
         <button class="shopping-item-toggle js-item-toggle">
@@ -104,23 +115,19 @@ function deleteItem (itemIndex){
   STORE.items.splice(itemIndex, 1);
 }
 
-function getCheckedItems(){
-  $('#filterChecked').submit(function(event){
-    event.preventDefault();
-    console.log('filter is firing');
-    STORE.checkedOnly.push(STORE.items.filter(item => item.checked === true));
-  });
+
+
+  
 //   console.log(STORE.uncheckedOnly);
-}
 
-function removeCheckedFromItems(){
-  for(let i = 0; i< STORE.items.length; i++){
-    if(STORE.items[i].checked === true)
-      delete STORE.items[i];
-  }
-}
 
-// function showOnlyUnchecked()
+
+
+
+
+// function showOnlyUnchecked
+
+
 
 // this function will be our callback when the page loads. it's responsible for
 // initially rendering the shopping list, and activating our individual functions
@@ -131,7 +138,7 @@ function handleShoppingList() {
   handleNewItemSubmit();
   handleItemCheckClicked();
   handleDeleteItemClicked();
-  
+  handleShowUncheckedOnly();
 }
 
 // when the page loads, call `handleShoppingList`
