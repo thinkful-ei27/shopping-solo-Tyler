@@ -3,31 +3,22 @@
 const STORE = {
 
   items: [
-    {name: 'apples', checked: false},
-    {name: 'oranges', checked: false},
-    {name: 'milk', checked: true},
-    {name: 'bread', checked: false}
+    {name: 'apples', checked: false, foundWhenSearched: false},
+    {name: 'oranges', checked: false, foundWhenSearched: false},
+    {name: 'milk', checked: true, foundWhenSearched: false},
+    {name: 'bread', checked: false, foundWhenSearched: false}
   ],
 
-  displayUnchecked: false
-
+  displayUnchecked: false,
+  searchedItem: '',
+  displayMatch: false,
 };
-function handleShowUncheckedOnly(){
-    $('#filterChecked').submit(function(event){
-      event.preventDefault();
-    changeSTOREDisplayUnchecked();
-    renderShoppingList();
-  });
-}
-
-function changeSTOREDisplayUnchecked() {
-  STORE.displayUnchecked = !STORE.displayUnchecked;
-}
-
 
 function generateItemElement(item, itemIndex, template) {
   return `
-    <li class="js-item-index-element" data-item-index="${itemIndex}" ${STORE.displayUnchecked && item.checked ? 'hidden' : ''}>
+    <li class="js-item-index-element" data-item-index="${itemIndex}" \
+    ${STORE.displayUnchecked && item.checked ? 'hidden' : ''}\
+    ${STORE.displayMatch && !item.foundWhenSearched ? 'hidden' : ''}>
       <span class="shopping-item js-shopping-item ${item.checked ? 'shopping-item__checked' : ''}">${item.name}</span>
       <div class="shopping-item-controls">
         <button class="shopping-item-toggle js-item-toggle">
@@ -39,7 +30,6 @@ function generateItemElement(item, itemIndex, template) {
       </div>
     </li>`;
 }
-
 
 function generateShoppingItemsString(shoppingList) {
   console.log('Generating shopping list element');
@@ -62,7 +52,7 @@ function renderShoppingList() {
 
 function addItemToShoppingList(itemName) {
   console.log(`Adding "${itemName}" to shopping list`);
-  STORE.items.push({name: itemName, checked: false});
+  STORE.items.push({name: itemName, checked: false, foundWhenSearched:false});
 }
 
 function handleNewItemSubmit() {
@@ -115,6 +105,45 @@ function deleteItem (itemIndex){
   STORE.items.splice(itemIndex, 1);
 }
 
+function handleShowUncheckedOnly(){
+  $('#filterChecked').submit(function(event){
+    event.preventDefault();
+    changeSTOREDisplayUnchecked();
+    renderShoppingList();
+  });
+}
+  
+function changeSTOREDisplayUnchecked() {
+  STORE.displayUnchecked = !STORE.displayUnchecked;
+}
+
+function handleSearchInputClick(){
+  $('#js-search-bar').submit(function(event) {
+    event.preventDefault();
+    console.log('you selected me right');
+    STORE.searchedItem = $('.js-search-entry').val();
+    console.log(STORE.searchedItem);
+    
+    
+    runASearch();
+  });
+}
+function runASearch(){
+  for(const prop in STORE.items){
+    if(STORE.items[prop].name === STORE.searchedItem){
+      STORE.items[prop].foundWhenSearched = true;
+    }
+  }
+  STORE.displayMatch = true;
+  renderShoppingList();
+}
+    
+// console.log(STORE.items[prop].name);
+    
+
+
+
+// then we need to filter the displayed items, or STORE to only show those items that match whats captured from the submit input
 
 
   
@@ -139,6 +168,8 @@ function handleShoppingList() {
   handleItemCheckClicked();
   handleDeleteItemClicked();
   handleShowUncheckedOnly();
+  handleSearchInputClick();
+  // getStoreSearchInput();
 }
 
 // when the page loads, call `handleShoppingList`
