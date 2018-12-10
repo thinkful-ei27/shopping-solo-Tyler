@@ -123,8 +123,6 @@ function handleSearchInputClick(){
     console.log('you selected me right');
     STORE.searchedItem = $('.js-search-entry').val();
     console.log(STORE.searchedItem);
-    
-    
     runASearch();
   });
 }
@@ -137,6 +135,23 @@ function runASearch(){
   STORE.displayMatch = true;
   renderShoppingList();
 }
+
+function resetFound() {
+  for(const prop in STORE.items){
+    STORE.items[prop].foundWhenSearched = false;
+  }
+  STORE.displayMatch = false;
+  renderShoppingList();
+}
+
+function handleShowList(){
+  $('#resetDisplay').submit(function(event) {
+    event.preventDefault();
+    console.log('you are targeting what you think you are');
+    resetFound();
+  });
+}
+
     
 // console.log(STORE.items[prop].name);
     
@@ -169,7 +184,7 @@ function handleShoppingList() {
   handleDeleteItemClicked();
   handleShowUncheckedOnly();
   handleSearchInputClick();
-  // getStoreSearchInput();
+  handleShowList();
 }
 
 // when the page loads, call `handleShoppingList`
